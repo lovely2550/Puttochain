@@ -1,6 +1,10 @@
-// 2_deploy_karma_token.js
 const KarmaToken = artifacts.require("KarmaToken");
 
-module.exports = function (deployer) {
-  deployer.deploy(KarmaToken);
+module.exports = async function (deployer, network, accounts) {
+  console.log("🚀 Deploying KarmaToken to network:", network);
+
+  await deployer.deploy(KarmaToken);
+  const karmaToken = await KarmaToken.deployed();
+
+  console.log("✅ KarmaToken deployed at address:", karmaToken.address);
 };
