@@ -1,31 +1,34 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+/**
+ * @title KarmaToken
+ * @dev ERC20 token representing digital merit (Karma) in Putthochain.
+ * Users gain Karma for good actions recorded on-chain.
+ */
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract KarmaToken is ERC20, Ownable {
-    
-    // เหตุการณ์ที่จะถูกบันทึกเมื่อมีการทำสมาธิ
-    event MeditationLog(address indexed user, uint256 durationInMinutes, uint256 timestamp);
-
-    constructor() ERC20("Karma Token", "KRM") Ownable(msg.sender) {
-        _mint(owner(), 1000000 * 10 ** decimals()); // สร้างโทเคนเริ่มต้น
+    constructor() ERC20("Karma Token", "KARMA") Ownable(msg.sender) {
+        _mint(msg.sender, 1000000 * 10 ** decimals()); // initial supply
     }
 
-    // ฟังก์ชันสำหรับแจก Karma Token เป็นรางวัล
-    function giveKarma(address to, uint256 amount) public onlyOwner {
+    /**
+     * @notice Mint new Karma tokens to reward good deeds.
+     * @param to Address of recipient.
+     * @param amount Number of tokens to mint.
+     */
+    function mintKarma(address to, uint256 amount) external onlyOwner {
         _mint(to, amount);
     }
-    
-    // ฟังก์ชันสำหรับบันทึกการทำสมาธิ
-    function logMeditation(uint256 durationInMinutes) public {
-        // เพิ่มเงื่อนไขการให้รางวัล: หากทำสมาธิครบ 30 นาที จะได้รับ 100 KRM
-        if (durationInMinutes >= 30) {
-            _mint(msg.sender, 100 * 10**decimals()); 
-        }
-        
-        // บันทึกข้อมูลการทำสมาธิลงในบล็อกเชนผ่าน Event
-        emit MeditationLog(msg.sender, durationInMinutes, block.timestamp);
+
+    /**
+     * @notice Burn Karma tokens (for bad karma or balance correction).
+     * @param from Address of the holder.
+     * @param amount Number of tokens to burn.
+     */
+    function burnKarma(address from, uint256 amount) external onlyOwner {
+        _burn(from, amount);
     }
 }
